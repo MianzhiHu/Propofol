@@ -9,7 +9,8 @@ target_dir = 'data_clean'
 
 def read_files(directory: str):
     for file in os.listdir(directory):
-        if file.endswith("_04_LPI_000.netts"):
+        # To read files ending with "_04_LPI_000.netts" and do not contain "02CB_01_movie", "08BC_01_movie", "19AK_01_rest", and "22CY_01_movie"
+        if file.endswith("_04_LPI_000.netts") and not file.startswith("02CB_01_movie") and not file.startswith("08BC_01_movie") and not file.startswith("19AK_01_rest") and not file.startswith("22CY_01_movie"):
             # load data as numpy 2d array
             array_2d = np.loadtxt(os.path.join(target_dir, file), delimiter='\t')
             yield array_2d, file
@@ -42,7 +43,7 @@ def preprocess():
     files_processed = []
 
     for array_2d, file in read_files(directory=target_dir):
-        if not file.endswith('_04_LPI_000.netts'):
+        if not file.endswith('_04_LPI_000.netts')and not file.startswith("02CB_01_movie") and not file.startswith("08BC_01_movie") and not file.startswith("19AK_01_rest") and not file.startswith("22CY_01_movie"):
             continue
         processed_counter += 1
         files_processed.append(file)
@@ -81,12 +82,13 @@ def preprocess():
     with open('recovery.pickle', 'wb') as outfile:
         pickle.dump([results, files_processed], outfile)
 
+preprocess()
 
 if __name__ == '__main__':
-    # preprocess()
+
     with open('recovery.pickle', 'rb') as infile:
         results, files = pickle.load(infile)
         counter = 0
         # print(results)
         # print(files)
-        print(len(files))
+        # print(len(files))

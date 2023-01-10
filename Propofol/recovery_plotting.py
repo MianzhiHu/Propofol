@@ -48,11 +48,10 @@ if __name__ == '__main__':
     results_df_movie = results_df_complete.filter(axis=1, regex='.*movie.*')
     results_df_rest = results_df_complete.filter(axis=1, regex='.*rest.*')
     results_df_movie_100 = results_df_movie.head(100)
-
     results_df_rest_100 = results_df_rest.head(100)
     # results_df_rest_100.T.to_csv('rest_100.csv')
-    results_df_movie_100.T.to_csv('movie_100.csv')
-
+    # results_df_movie_100.T.to_csv('movie_100.csv')
+    #
     # draw(results_df_complete, 'recovery')
     # draw_whole(results_df_complete, 'recovery average')
     # draw(results_df_movie, 'movie')
