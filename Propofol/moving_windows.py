@@ -1,23 +1,46 @@
 import os
 import pickle
-from pprint import pprint
 import numpy as np
 import pandas as pd
 from Propofol.dfa import dfa
 
 target_dir = 'data_clean'
 
-def read_files(directory: str):
+
+def read_files_awake(directory: str):
     for file in os.listdir(directory):
-        # To read files ending with "_04_LPI_000.netts" and do not contain "02CB_01_movie", "08BC_01_movie", "19AK_01_rest", and "22CY_01_movie"
-        if file.endswith("_04_LPI_000.netts") and not file.startswith("02CB_01_movie") and not file.startswith("08BC_01_movie") and not file.startswith("19AK_01_rest") and not file.startswith("22CY_01_movie"):
+        if file.endswith("_01_LPI_000.netts") and not file.startswith("02CB_01_movie") and not file.startswith("08BC_01_movie") and not file.startswith("19AK_01_rest") and not file.startswith("22CY_01_movie"):
+            # load data as numpy 2d array
+            array_2d = np.loadtxt(os.path.join(target_dir, file), delimiter='\t')
+            yield array_2d, file
+
+
+def read_files_mild(directory: str):
+    for file in os.listdir(directory):
+        if file.endswith("_02_LPI_000.netts") and not file.startswith("04HD_01_movie") and not file.startswith("10JR_01_movie") and not file.startswith("22CY_01_movie"):
+            # load data as numpy 2d array
+            array_2d = np.loadtxt(os.path.join(target_dir, file), delimiter='\t')
+            yield array_2d, file
+
+
+def read_files_deep(directory: str):
+    for file in os.listdir(directory):
+        if file.endswith("_03_LPI_000.netts") and not file.startswith("04HD_01_movie") and not file.startswith("13CA_01_movie") and not file.startswith("17NA_01_movie"):
+            # load data as numpy 2d array
+            array_2d = np.loadtxt(os.path.join(target_dir, file), delimiter='\t')
+            yield array_2d, file
+
+
+def read_files_recovery(directory: str):
+    for file in os.listdir(directory):
+        if file.endswith("_04_LPI_000.netts") and not file.startswith("17EK_01_movie") and not file.startswith("17NA_01_movie") and not file.startswith("25JK_01_movie") and not file.startswith("30AQ_01_movie"):
             # load data as numpy 2d array
             array_2d = np.loadtxt(os.path.join(target_dir, file), delimiter='\t')
             yield array_2d, file
 
 
 
-def recovery_process(dfa_results):
+def dfa_process(dfa_results):
     split_h = len(dfa_results[0])
     # turn results into a 2d array, where each column is a key
     hurst = np.hsplit(np.array(np.array(dfa_results[0])), split_h)
@@ -42,9 +65,7 @@ def preprocess():
     processed_counter = 0
     files_processed = []
 
-    for array_2d, file in read_files(directory=target_dir):
-        if not file.endswith('_04_LPI_000.netts')and not file.startswith("02CB_01_movie") and not file.startswith("08BC_01_movie") and not file.startswith("19AK_01_rest") and not file.startswith("22CY_01_movie"):
-            continue
+    for array_2d, file in read_files_deep(directory=target_dir):
         processed_counter += 1
         files_processed.append(file)
         print(df := pd.DataFrame(array_2d))
@@ -66,7 +87,7 @@ def preprocess():
                                      return_confidence_interval=True,
                                      return_windows=False)
 
-            rec_result = recovery_process(dfa_results=slice_dfa_result)
+            rec_result = dfa_process(dfa_results=slice_dfa_result)
             mean_hurst = rec_result['hurst'].mean()
 
             results.setdefault(window_number, []).append(mean_hurst)
@@ -79,16 +100,18 @@ def preprocess():
         print(results)
 
     print('finished processing all files, saving to pickle')
-    with open('recovery.pickle', 'wb') as outfile:
+    with open('deep.pickle', 'wb') as outfile:
         pickle.dump([results, files_processed], outfile)
+    print('done')
+
 
 preprocess()
 
-if __name__ == '__main__':
-
-    with open('recovery.pickle', 'rb') as infile:
-        results, files = pickle.load(infile)
-        counter = 0
-        # print(results)
-        # print(files)
-        # print(len(files))
+# if __name__ == '__main__':
+#
+#     with open('awake.pickle', 'rb') as infile:
+#         results, files = pickle.load(infile)
+#         counter = 0
+#         print(results)
+#         print(files)
+#         print(len(files))
