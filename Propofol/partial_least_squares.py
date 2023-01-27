@@ -3,18 +3,18 @@ import numpy as np
 import pandas as pd
 from sklearn.cross_decomposition import PLSRegression
 
-# with open('outcome_268.pickle', 'rb') as f:
-#     results_dict = pickle.load(f)
-#     counter = 0
-#     movie_awake = {}
-#     for key, value in results_dict.items():
-#         if 'movie' in key and key.endswith('02_LPI_000.npy'):
-#             movie_awake[key] = value
-#             counter += 1
-#
-# with open('movie_mild.pickle', 'wb') as outfile:
-#     pickle.dump(movie_awake, outfile)
-#     print('files saved to pickle')
+with open('outcome_268.pickle', 'rb') as f:
+    results_dict = pickle.load(f)
+    counter = 0
+    movie_awake = {}
+    for key, value in results_dict.items():
+        if 'movie' in key and key.endswith('04_LPI_000.npy'):
+            movie_awake[key] = value
+            counter += 1
+
+with open('movie_recovery.pickle', 'wb') as outfile:
+    pickle.dump(movie_awake, outfile)
+    print('files saved to pickle')
 
 
 def pls_csv(pickle_name: str):
@@ -39,7 +39,8 @@ def pls_csv(pickle_name: str):
         hurst_df.to_csv(f'pls_{pickle_name}.csv', index=False, header=True)
         print(f'pls_{pickle_name} saved to disk')
 
-pls_csv('movie_mild.pickle')
+pls_csv('movie_recovery.pickle')
+
 
 
 
