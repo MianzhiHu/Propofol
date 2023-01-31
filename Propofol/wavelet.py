@@ -1,8 +1,18 @@
-import matlab.engine
+import pandas as pd
+import numpy as np
+import pprint
 
-eng = matlab.engine.start_matlab()
+# load the wavelet output
+wavelet_df = pd.read_csv('wavelet_output.csv')
 
-# To import a function from a hurst_wavelet_mf.m file, use the following:
-eng.addpath(r'C:\Users\zuire\PycharmProjects\pythonProject1\Propofol\hurst_wavelet_mf.m', nargout=0)
-eng.hurst_wavelet_mf(nargout=0)
+# Calculate the mean of each column
+wavelet_df_mean = wavelet_df.mean(axis=0)
 
+# stack the mean values into a dataframe with their column names
+wavelet_df_mean = pd.DataFrame(wavelet_df_mean)
+
+# name the column
+wavelet_df_mean.columns = ['hurst_average']
+
+# save the dataframe to a csv file
+wavelet_df_mean.to_csv('wavelet_df_mean.csv', index=True, header=True)

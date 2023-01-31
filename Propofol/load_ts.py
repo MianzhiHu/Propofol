@@ -25,11 +25,12 @@ def load_ts(netts_file_path):
         return sub_ts_final
 
 
-# for file in os.listdir('data_clean'):
-#     if file.endswith(".netts"):
-#         ts = load_ts(os.path.join('data_clean', file))
-#         # save each ts as a npy file
-#         np.save(os.path.join('data_clean', file.replace('.netts', '.npy')), ts)
+for file in os.listdir('data_clean'):
+    if file.endswith(".netts"):
+        ts = load_ts(os.path.join('data_clean', file))
+        # save each ts as a .csv file in the MATLAB folder
+        np.savetxt(os.path.join('MATLAB', file.replace('.netts', '.csv')), ts, delimiter=',')
+
 
 # for file in os.listdir('data_clean'):
 #     if file.endswith(".npy"):
@@ -81,38 +82,38 @@ def preprocess_268():
 # preprocess_268()
 
 
-if __name__ == '__main__':
-    rsquared_average: list = []
-    rsquared_min: list = []
-    print('showing results from pickle')
-
-    with open('outcome_268.pickle', 'rb') as f:
-        results_dict = pickle.load(f)
-        for key, value in results_dict.items():
-            # print(key)
-            # print(value)
-            rsquared_average.append(value['r_squared'].mean())
-            rsquared_min.append(value['r_squared'].min())
-            # print(f'average r_squared for {key}: {value["r_squared"].mean()}')
-            # print(f'min r_squared for {key}: {value["r_squared"].min()}')
-    plt.plot(rsquared_average, color='red')
-    plt.ylabel('average r_squared', color='red')
-    plt.xlabel('subject')
-    ax = plt.twinx()
-    ax.plot(rsquared_min, color='blue')
-    ax.set_ylabel('min r_squared', color='blue')
-    plt.show()
-
-    plt.plot(rsquared_average, color='red')
-    plt.axhline(y=0.95, color='black', linestyle='--')
-    plt.axhline(y=0.9, color='black', linestyle='--')
-    plt.ylabel('average r_squared', color='red')
-    plt.xlabel('subject')
-    plt.show()
-
-    plt.plot(rsquared_min, color='blue')
-    plt.axhline(y=0.8, color='black', linestyle='--')
-    plt.axhline(y=0.65, color='black', linestyle='--')
-    plt.ylabel('min r_squared', color='blue')
-    plt.xlabel('subject')
-    plt.show()
+# if __name__ == '__main__':
+#     rsquared_average: list = []
+#     rsquared_min: list = []
+#     print('showing results from pickle')
+#
+#     with open('outcome_268.pickle', 'rb') as f:
+#         results_dict = pickle.load(f)
+#         for key, value in results_dict.items():
+#             # print(key)
+#             # print(value)
+#             rsquared_average.append(value['r_squared'].mean())
+#             rsquared_min.append(value['r_squared'].min())
+#             # print(f'average r_squared for {key}: {value["r_squared"].mean()}')
+#             # print(f'min r_squared for {key}: {value["r_squared"].min()}')
+#     plt.plot(rsquared_average, color='red')
+#     plt.ylabel('average r_squared', color='red')
+#     plt.xlabel('subject')
+#     ax = plt.twinx()
+#     ax.plot(rsquared_min, color='blue')
+#     ax.set_ylabel('min r_squared', color='blue')
+#     plt.show()
+#
+#     plt.plot(rsquared_average, color='red')
+#     plt.axhline(y=0.95, color='black', linestyle='--')
+#     plt.axhline(y=0.9, color='black', linestyle='--')
+#     plt.ylabel('average r_squared', color='red')
+#     plt.xlabel('subject')
+#     plt.show()
+#
+#     plt.plot(rsquared_min, color='blue')
+#     plt.axhline(y=0.8, color='black', linestyle='--')
+#     plt.axhline(y=0.65, color='black', linestyle='--')
+#     plt.ylabel('min r_squared', color='blue')
+#     plt.xlabel('subject')
+#     plt.show()
