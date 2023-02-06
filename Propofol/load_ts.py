@@ -25,11 +25,11 @@ def load_ts(netts_file_path):
         return sub_ts_final
 
 
-for file in os.listdir('data_clean'):
-    if file.endswith(".netts"):
-        ts = load_ts(os.path.join('data_clean', file))
-        # save each ts as a .csv file in the MATLAB folder
-        np.savetxt(os.path.join('MATLAB', file.replace('.netts', '.csv')), ts, delimiter=',')
+# for file in os.listdir('data_clean'):
+#     if file.endswith(".netts"):
+#         ts = load_ts(os.path.join('data_clean', file))
+#         # save each ts as a .csv file in the MATLAB folder
+#         np.savetxt(os.path.join(file.replace('.netts', '.npy')), ts, delimiter=',')
 
 
 # for file in os.listdir('data_clean'):
