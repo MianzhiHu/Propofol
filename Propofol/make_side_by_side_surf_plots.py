@@ -38,4 +38,5 @@ def make_side_by_side_surf_plots(name,texture,vmin=None,vmax=None, cmap='RdBu', 
             except:
                 pass
     # output the figure
-    plt.savefig('C:\Users\zuire\PycharmProjects\pythonProject1\Propofol\graphs\%s.png' % name,dpi=600)
+    plt.savefig(name+'.png', dpi=600)
+    plt.show()

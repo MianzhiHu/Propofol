@@ -105,10 +105,13 @@ def plotting_all(pickle_name: str):
         # print(results_df_complete)
         # print(results_df_movie)
         # print(results_df_rest)
+        return rest_90_tests, movie_90_tests
 
 
 
-plotting_all('awake.pickle')
-plotting_all('mild.pickle')
-plotting_all('deep.pickle')
-plotting_all('recovery.pickle')
+
+# plotting_all('awake.pickle')
+rest, movie =  plotting_all('mild.pickle')
+# rest, movie = plotting_all('deep.pickle')
+# plotting_all('recovery.pickle')
+

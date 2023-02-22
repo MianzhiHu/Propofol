@@ -2,9 +2,36 @@ import os
 import pickle
 import numpy as np
 import pandas as pd
+from matplotlib import pyplot as plt
+
 from Propofol.dfa import dfa
 
 target_dir = 'data_clean'
+
+# # read hurst averages
+# hurst_averages = pd.read_csv('hurst_averages.csv')
+#
+# # filter out rows with r_squared < 0.9
+# hurst_averages = hurst_averages[hurst_averages['r_squared'] < 0.9]
+#
+# # print the "key" column and save it to a list
+# keys = []
+# for key in hurst_averages['key']:
+#     keys.append(key)
+#
+# for key in keys:
+#     # delete the ".npy" extension
+#     key = key[:-4]
+#     # print(key)
+
+def read_files(directory: str):
+    for file in os.listdir(directory):
+        # exclude only files that has elements of the list "keys" in their name
+        if file.endswith(".npy") and not any(key in file for key in keys):
+            # load data as numpy 2d array
+            array_2d = np.load(os.path.join(target_dir, file))
+            yield array_2d, file
+
 
 
 def read_files_awake(directory: str):
@@ -65,7 +92,7 @@ def preprocess():
     processed_counter = 0
     files_processed = []
 
-    for array_2d, file in read_files_deep(directory=target_dir):
+    for array_2d, file in read_files(directory=target_dir):
         processed_counter += 1
         files_processed.append(file)
         print(df := pd.DataFrame(array_2d))
@@ -88,9 +115,9 @@ def preprocess():
                                      return_windows=False)
 
             rec_result = dfa_process(dfa_results=slice_dfa_result)
-            mean_hurst = rec_result['hurst'].mean()
+            hurst = rec_result['hurst']
 
-            results.setdefault(window_number, []).append(mean_hurst)
+            results.setdefault(window_number, []).append(hurst)
 
         print(f'processing done for {file}')
         print('filling in missing values for counter = ', processed_counter)
@@ -100,18 +127,63 @@ def preprocess():
         print(results)
 
     print('finished processing all files, saving to pickle')
-    with open('deep.pickle', 'wb') as outfile:
+    with open('full_hurst.pickle', 'wb') as outfile:
         pickle.dump([results, files_processed], outfile)
     print('done')
 
 
-preprocess()
+# preprocess()
 
-# if __name__ == '__main__':
-#
-#     with open('awake.pickle', 'rb') as infile:
-#         results, files = pickle.load(infile)
-#         counter = 0
-#         print(results)
-#         print(files)
-#         print(len(files))
+
+if __name__ == '__main__':
+    with open('full_hurst.pickle', 'rb') as infile:
+        results, files = pickle.load(infile)
+        counter = 0
+        df_early = pd.DataFrame()  # create an empty DataFrame
+        df_late = pd.DataFrame()  # create an empty DataFrame
+        # # select only files containing the string "movie_03"
+        # for file in files:
+        #     if "movie_03" in file:
+        #         counter += 1
+        #         # for the selected files, only take the first 20 windows
+        #         for window in results[counter][:20]:
+        #             print(window)
+        #             window_df_early = pd.DataFrame(window)
+        #             df_early = pd.concat([df_early, window_df_early], axis=1) # append window_df to df
+        #         for window in results[counter][41:61]:
+        #             print(window)
+        #             window_df_late = pd.DataFrame(window)
+        #             df_late = pd.concat([df_late, window_df_late], axis=1)
+        for file in files:
+            if "movie_02" in file:
+                counter += 1
+                # for the selected files, only take the first 20 windows
+                for window in results[counter][:5]:
+                    print(window)
+                    window_df_early = pd.DataFrame(window)
+                    df_early = pd.concat([df_early, window_df_early], axis=1)
+                for window in results[counter][41:46]:
+                    print(window)
+                    window_df_late = pd.DataFrame(window)
+                    df_late = pd.concat([df_late, window_df_late], axis=1)
+
+        df_early = df_early.T
+        df_late = df_late.T
+        print(df_early)
+        print(df_late)
+        # save the DataFrame to a csv file
+        df_early.to_csv('pls_movie_02_early.csv', index=False, header=False)
+        df_late.to_csv('pls_movie_02_late.csv', index=False, header=False)
+
+
+
+
+
+
+
+
+
+
+
+
+
